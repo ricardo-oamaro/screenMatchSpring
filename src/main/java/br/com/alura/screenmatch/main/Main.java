@@ -3,10 +3,14 @@ package br.com.alura.screenmatch.main;
 import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
+import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.service.ConsomeApi;
 import br.com.alura.screenmatch.service.ConverteDados;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,7 +51,58 @@ public class Main {
                 System.out.println(dadosEpisodio.titulo());
             }
         }
-        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+//        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+
+        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream())
+                .toList();
+
+        System.out.println("====== Sorted 5 =======\n");
+
+        dadosEpisodios.stream()
+                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+                .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
+                .limit(5)
+                .forEach(System.out::println);
+
+        System.out.println("=========================");
+
+
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream()
+                        .map(d -> new Episodio(t.numero(), d))
+                ).toList();
+
+        episodios.forEach(System.out::println);
+
+        System.out.println("Digite a data do episodio: ");
+        var ano = scanner.nextInt();
+        scanner.nextLine();
+
+        LocalDate data = LocalDate.of(ano, 1, 1);
+
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        episodios.stream()
+                .filter(e -> e.getDataLancamento() != null && e.getDataLancamento().isAfter(data))
+                .forEach(e -> System.out.println(
+                        "Temporada: " + e.getTemporada() +
+                                ", Episodio: " + e.getNumeroEpisodio() +
+                                ", Data lançamento: " + e.getDataLancamento().format(formatador)));
+
+
+        System.out.println("Digite o episodio: ");
+        var episodio = scanner.nextLine();
+
+        for (Episodio e : episodios) {
+            if (e.getTitulo()
+                    .toUpperCase()
+                    .contains(episodio.toUpperCase()
+                    )) {
+                System.out.println("Temportada= " + e.getTemporada());
+            }
+        }
+
     }
 }
 
