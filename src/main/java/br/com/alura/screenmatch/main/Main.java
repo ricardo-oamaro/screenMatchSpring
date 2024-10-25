@@ -3,6 +3,7 @@ package br.com.alura.screenmatch.main;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Serie;
+import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsomeApi;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -19,6 +20,12 @@ public class Main {
     public final String ENDERECO = "http://www.omdbapi.com/?t=";
     public final String API_KEY = "&apikey=a2749c00";
     private List<DadosSerie> series = new ArrayList<>();
+
+    private SerieRepository serieRepository;
+
+    public Main(SerieRepository serieRepository) {
+        this.serieRepository = serieRepository;
+    }
 
     public void exibeMenu() {
 
@@ -50,7 +57,8 @@ public class Main {
 
     private void buscarSerieWeb() {
         DadosSerie dados = getDadosSerie();
-        series.add(dados);
+        Serie serie = new Serie (dados);
+        serieRepository.save(serie);
         System.out.println(dados);
     }
 

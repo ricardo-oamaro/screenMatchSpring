@@ -1,16 +1,31 @@
 package br.com.alura.screenmatch.model;
 
+import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Optional;
 
+@Entity
+@Table(name = "series")
 public class Serie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true)
     private String titulo;
     private Integer totalTemporadas;
     private Double notaImdb;
+    @Enumerated(EnumType.STRING)
     private Categoria genero;
     private String sinopse;
     private String urlImagem;
     private String anoLancamento;
     private String atores;
+
+    @Transient
+    private List<Episodio> episodios;
+
+    private Serie() {}
 
     public Serie(DadosSerie dadosSerie) {
         this.titulo = dadosSerie.titulo();
@@ -21,6 +36,22 @@ public class Serie {
         this.urlImagem = dadosSerie.urlImagem();
         this.anoLancamento = dadosSerie.anoLancamento();
         this.atores = dadosSerie.atores();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        this.episodios = episodios;
     }
 
     public String getTitulo() {
