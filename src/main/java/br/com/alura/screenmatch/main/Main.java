@@ -31,12 +31,16 @@ public class Main {
 
         var opcao = -1;
         while (opcao != 0) {
-            System.out.println("***** OPÇÕES *****\n" +
-                    "1 - Buscar série\n" +
-                    "2 - Listar séries\n" +
-                    "3 - Buscar episódios por série\n" +
-                    "0 - Sair\n" +
-                    "Digite a opção desejada: ");
+            System.out.println("""
+                           ***** MENU *****
+                           1 - Buscar série
+                           2 - Listar séries
+                           3 - Buscar episódios por série
+                           4 - Buscar série por titulo
+                           0 - Sair
+                           Digite a opção desejada: 
+                    
+                    """);
             opcao = scanner.nextInt();
             scanner.nextLine();
 
@@ -44,10 +48,18 @@ public class Main {
                 case 1 -> buscarSerieWeb();
                 case 2 -> listarSeries();
                 case 3 -> buscarEpisodioPorSerie();
+                case 4 -> buscarSeriePorTitulo();
                 case 0 -> System.out.println("Saindo...");
                 default -> System.out.println("Opção inválida!");
             }
         }
+    }
+
+    private void buscarSeriePorTitulo() {
+        System.out.println("Digite o nome da série para busca");
+        var nomeSerie = scanner.nextLine();
+        Optional<Serie> serie = serieRepository.findByTituloContainingIgnoreCase(nomeSerie);
+        serie.ifPresentOrElse(System.out::println, () -> System.out.println("Série não encontrada"));
     }
 
     private void listarSeries() {
